@@ -5,4 +5,10 @@
     <string name="passwd_label">Contraseña</string>
     <string name="passwd_placeholder">INTRODUCE CONTRASEÑA</string>
     <string name="button1_label">ACCEDER</string>
+    <string name="button2_label">NUEVO TEST</string>
+    <string name="button3_label">NUEVO EJERCICIO</string>
+    <string name="button4_label">SEGUIMIENTO</string>
+    <string name="Username_menu">Bienvenido John Doe</string>
+    <string name="Username_menu2">Lección 1: Introducción</string>
+    <string name="test_text">¿Cuál de las siguientes opciones NO se indica en el fichero de manifiesto de la app?</string>
 </resources>
