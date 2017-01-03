@@ -15,8 +15,7 @@
         android:id="@+id/test_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="15dp"
-        android:text="@string/test_text"/>
+        android:textSize="15dp"/>
 
     <RadioGroup
         android:id="@+id/test_choices"

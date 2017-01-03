@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.view.View;
 
+import java.io.Serializable;
+
 public class MenuActivity extends AppCompatActivity {
 
     @Override
