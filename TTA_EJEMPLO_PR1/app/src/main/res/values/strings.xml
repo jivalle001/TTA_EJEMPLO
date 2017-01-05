@@ -18,9 +18,7 @@
     <string name="button6_label">SACAR FOTOS</string>
     <string name="button7_label">GRABAR AUDIO</string>
     <string name="button8_label">GRABAR VIDEO</string>
-    <string name="answ1">Versión de la aplicación</string>
-    <string name="answ2">Listado de los componentes de la aplicación</string>
-    <string name="answ3">Opciones del menú de ajustes</string>
-    <string name="answ4">Nivel mínimo de la API Android requerida</string>
-    <string name="answ5">Nombre del paquete java de la aplicación</string>
+    <string name="noCamera">No hay cámara en tu dispositivo</string>
+    <string name="noApp">No hay app desde donde acceder a la función llamada</string>
+    <string name="noMicro">No hay microfono en tu dispositivo</string>
 </resources>

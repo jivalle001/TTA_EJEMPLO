@@ -1,12 +1,10 @@
 package tta_ejemplo_pr1.intel.tta.ehu.eus.tta_ejemplo_pr1;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-
-import java.io.Serializable;
+import android.widget.TextView;
 
 public class MenuActivity extends AppCompatActivity {
 
