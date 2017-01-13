@@ -35,7 +35,7 @@ public class TestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
         Intent intent = getIntent();
-        setTitle("Nuevo Test");git
+        setTitle("Nuevo Test");
 
         RadioGroup group = (RadioGroup)findViewById(R.id.test_choices);
         TextView test_text = (TextView)findViewById(R.id.test_text);
