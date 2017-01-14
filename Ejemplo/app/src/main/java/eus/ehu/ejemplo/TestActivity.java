@@ -3,12 +3,14 @@ package eus.ehu.ejemplo;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.EditText;
 import android.widget.MediaController;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -16,11 +18,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 public class TestActivity extends AppCompatActivity {
 
-    String baseUrl = "http://u017633.ehu.eus:28080/ServidorTta/rest/tta";
+    /*String baseUrl = "http://u017633.ehu.eus:28080/ServidorTta/rest/tta";
 
     String question = "¿Cuál de las siguientes opciones NO se indica en el fichero de manifiesto de la app?";
     String[] answers = {"Versión de la aplicación","Listado de los componentes de la aplicación","Opciones del menú de ajustes","Nivel mínimo de la API Android requerida","Nombre del paquete java de la aplicación"};
@@ -28,6 +34,10 @@ public class TestActivity extends AppCompatActivity {
     String[] advise = {"https://www.google.es/","<html><body>The manifest describes the <b>components of the application</b>: " +
             "the activities, services, broadcast receivers, and content providers that...",null,"http://u017633.ehu.eus:28080/static/ServidorTta/AndroidManifest.mp4","http://u017633.ehu.eus:28080/static/ServidorTta/AndroidManifest.mp4"};
     String[] adviseType = {"text/html","text/html",null,"video/mp4","audio/mp4"};
+    int selected;*/
+
+    RestClient restClient = new RestClient("http://u017633.ehu.eus:28080/ServidorTta/rest/tta");
+    Test test;
     int selected;
 
     @Override
@@ -37,7 +47,35 @@ public class TestActivity extends AppCompatActivity {
         Intent intent = getIntent();
         setTitle("Nuevo Test");
 
-        RadioGroup group = (RadioGroup)findViewById(R.id.test_choices);
+        new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... voids) {
+                test = getTest();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                RadioGroup group = (RadioGroup)findViewById(R.id.test_choices);
+                TextView test_text = (TextView)findViewById(R.id.test_text);
+                test_text.setText(test.getWording());
+                for(int i=0;i<test.getChoices().size();i++) {
+                    RadioButton rb = new RadioButton(getApplicationContext());
+                    group.addView(rb);
+                    rb.setText(test.getChoices().get(i).getAnswer());
+                    rb.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            findViewById(R.id.button_send_test).setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+
+            }
+        }.execute();
+
+        /*RadioGroup group = (RadioGroup)findViewById(R.id.test_choices);
         TextView test_text = (TextView)findViewById(R.id.test_text);
         test_text.setText(question);
         for(int i=0;i<answers.length;i++) {
@@ -50,8 +88,50 @@ public class TestActivity extends AppCompatActivity {
                     findViewById(R.id.button_send_test).setVisibility(View.VISIBLE);
                 }
             });
+        }*/
+    }
+
+    public Test getTest(){
+        final String dni = ((EditText)findViewById(R.id.login)).getText().toString();
+        final String passwd = ((EditText)findViewById(R.id.passwd)).getText().toString();
+        try {
+            restClient.setHttpBasicAuth(dni,passwd);
+            Test test = new Test();
+            JSONObject json = restClient.getJson(String.format("getTest?id=1"));
+            test.setWording(json.getString("wording"));
+            JSONArray array = json.getJSONArray("choices");
+            for (int i = 0; i < array.length(); i++){
+                JSONObject item = array.getJSONObject(i);
+                Test.Choice choice = new Test.Choice();
+                choice.setId(item.getInt("id"));
+                choice.setAnswer(item.getString("answer"));
+                choice.setCorrect(item.getBoolean("correct"));
+                choice.setAdvise(item.getString("advise"));
+                choice.setMime(item.optString("mime",null));
+                test.getChoices().add(choice);
+            }
+            return test;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
+
+    /*public void putTest(Test tes) {
+        try{
+            JSONObject json = new JSONObject();
+            json.put("wording",test.getWording());
+            JSONArray array = new JSONArray();
+            for (Test.Choice choice : test.getChoices()){
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }*/
 
     public void send (View view) {
         int correct=0;
@@ -60,8 +140,8 @@ public class TestActivity extends AppCompatActivity {
         for(int i=0;i<choices;i++)
             group.getChildAt(i).setEnabled(false);
 
-        for(int i=0;i<corrects.length;i++) {
-            if(corrects[i]==true)
+        for(int i=0;i<test.getChoices().size();i++) {
+            if(test.getChoices().get(i).isCorrect()==true)
                 correct=i;
         }
 
@@ -81,16 +161,16 @@ public class TestActivity extends AppCompatActivity {
     }
 
     public void help(View view) {
-        switch (adviseType[selected]) {
+        switch (test.getChoices().get(selected).getMime()) {
             case "text/html":
-                showHTML(advise[selected]);
+                showHTML(test.getChoices().get(selected).getAdvise());
                 break;
             case "video/mp4":
-                showVideo(advise[selected]);
+                showVideo(test.getChoices().get(selected).getAdvise());
                 break;
             case "audio/mp4":
                 try {
-                    showAudio(advise[selected]);
+                    showAudio(test.getChoices().get(selected).getAdvise());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -1,8 +1,7 @@
 package eus.ehu.ejemplo;
 
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.util.Base64;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,11 +56,11 @@ public class RestClient {
         return conn;
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public String getString(String path) throws IOException {
         HttpURLConnection conn = null;
         try {
             conn = getConnection(path);
+            Log.d("Status", "STATUS = "+String.valueOf(conn.getResponseCode()));
             try(BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))){
                 return br.readLine();
             }
