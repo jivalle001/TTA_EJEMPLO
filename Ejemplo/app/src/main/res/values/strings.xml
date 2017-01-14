@@ -13,7 +13,6 @@
     <string name="test_text">¿Cuál de las siguientes opciones NO se indica en el fichero de manifiesto de la app?</string>
     <string name="button_send">ENVIAR</string>
     <string name="button_help">VER AYUDA</string>
-    <string name="exercise_text">Explica cómo aplicarías el patrón de diseño MVP en el desarrollo de una app para Android</string>
     <string name="button5_label">SUBIR FICHERO</string>
     <string name="button6_label">SACAR FOTOS</string>
     <string name="button7_label">GRABAR AUDIO</string>

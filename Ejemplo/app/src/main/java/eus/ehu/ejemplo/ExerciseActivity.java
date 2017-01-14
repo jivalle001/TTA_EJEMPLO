@@ -4,12 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +27,10 @@ public class ExerciseActivity extends AppCompatActivity {
     private final static int VIDEO_REQUEST_CODE = 3;
     private Uri pictureUri;
 
+    RestClient restClient = new RestClient("http://u017633.ehu.eus:28080/ServidorTta/rest/tta");
+
+    Exercise exercise;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,17 +40,47 @@ public class ExerciseActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        View view;
-        if(!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
-            view = findViewById(R.id.button_take_photo);
-            view.setEnabled(false);
-            view = findViewById(R.id.button_record_video);
-            view.setEnabled(false);
+        new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... voids) {
+                exercise = getExercise(1);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                View view;
+                TextView textView = (TextView)findViewById(R.id.exercise_wording);
+                textView.setText(exercise.getWording());
+                if(!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+                    view = findViewById(R.id.button_take_photo);
+                    view.setEnabled(false);
+                    view = findViewById(R.id.button_record_video);
+                    view.setEnabled(false);
+                }
+                if(!getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE)){
+                    view = findViewById(R.id.button_record_audio);
+                    view.setEnabled(false);
+                }
+            }
+        }.execute();
+
+
+    }
+
+    public Exercise getExercise(int id) {
+        try {
+            JSONObject json = restClient.getJson(String.format("getExercise?id="+id));
+            Exercise exercise = new Exercise();
+            exercise.setWording(json.getString("wording"));
+            return exercise;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        if(!getPackageManager().hasSystemFeature(PackageManager.FEATURE_MICROPHONE)){
-            view = findViewById(R.id.button_record_audio);
-            view.setEnabled(false);
-        }
+        return null;
     }
 
     public void subirFichero(View view) {
