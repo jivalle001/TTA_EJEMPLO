@@ -18,10 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 
 public class TestActivity extends AppCompatActivity {
@@ -39,6 +35,9 @@ public class TestActivity extends AppCompatActivity {
     RestClient restClient = new RestClient("http://u017633.ehu.eus:28080/ServidorTta/rest/tta");
     Test test;
     int selected;
+    final String dni = ((EditText)findViewById(R.id.login)).getText().toString();
+    final String passwd = ((EditText)findViewById(R.id.passwd)).getText().toString();
+    Data data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +49,7 @@ public class TestActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, Void>(){
             @Override
             protected Void doInBackground(Void... voids) {
-                test = getTest();
+                test = data.getTest(dni,passwd,restClient);
                 return null;
             }
 
@@ -91,47 +90,6 @@ public class TestActivity extends AppCompatActivity {
         }*/
     }
 
-    public Test getTest(){
-        final String dni = ((EditText)findViewById(R.id.login)).getText().toString();
-        final String passwd = ((EditText)findViewById(R.id.passwd)).getText().toString();
-        try {
-            restClient.setHttpBasicAuth(dni,passwd);
-            Test test = new Test();
-            JSONObject json = restClient.getJson(String.format("getTest?id=1"));
-            test.setWording(json.getString("wording"));
-            JSONArray array = json.getJSONArray("choices");
-            for (int i = 0; i < array.length(); i++){
-                JSONObject item = array.getJSONObject(i);
-                Test.Choice choice = new Test.Choice();
-                choice.setId(item.getInt("id"));
-                choice.setAnswer(item.getString("answer"));
-                choice.setCorrect(item.getBoolean("correct"));
-                choice.setAdvise(item.getString("advise"));
-                choice.setMime(item.optString("mime",null));
-                test.getChoices().add(choice);
-            }
-            return test;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /*public void putTest(Test tes) {
-        try{
-            JSONObject json = new JSONObject();
-            json.put("wording",test.getWording());
-            JSONArray array = new JSONArray();
-            for (Test.Choice choice : test.getChoices()){
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     public void send (View view) {
         int correct=0;

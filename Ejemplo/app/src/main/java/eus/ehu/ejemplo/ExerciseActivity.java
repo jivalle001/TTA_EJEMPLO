@@ -13,9 +13,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -26,6 +23,7 @@ public class ExerciseActivity extends AppCompatActivity {
     private final static int AUDIO_REQUEST_CODE = 2;
     private final static int VIDEO_REQUEST_CODE = 3;
     private Uri pictureUri;
+    private Data data;
 
     RestClient restClient = new RestClient("http://u017633.ehu.eus:28080/ServidorTta/rest/tta");
 
@@ -43,7 +41,7 @@ public class ExerciseActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, Void>(){
             @Override
             protected Void doInBackground(Void... voids) {
-                exercise = getExercise(1);
+                exercise = data.getExercise(1,restClient);
                 return null;
             }
 
@@ -69,19 +67,7 @@ public class ExerciseActivity extends AppCompatActivity {
 
     }
 
-    public Exercise getExercise(int id) {
-        try {
-            JSONObject json = restClient.getJson(String.format("getExercise?id="+id));
-            Exercise exercise = new Exercise();
-            exercise.setWording(json.getString("wording"));
-            return exercise;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+
 
     public void subirFichero(View view) {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
