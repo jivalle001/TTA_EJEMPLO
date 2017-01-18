@@ -10,7 +10,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.EditText;
 import android.widget.MediaController;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -35,21 +34,19 @@ public class TestActivity extends AppCompatActivity {
     RestClient restClient = new RestClient("http://u017633.ehu.eus:28080/ServidorTta/rest/tta");
     Test test;
     int selected;
-    final String dni = ((EditText)findViewById(R.id.login)).getText().toString();
-    final String passwd = ((EditText)findViewById(R.id.passwd)).getText().toString();
     Data data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         setTitle("Nuevo Test");
 
         new AsyncTask<Void, Void, Void>(){
             @Override
             protected Void doInBackground(Void... voids) {
-                test = data.getTest(dni,passwd,restClient);
+                test = data.getTest(intent.getStringExtra(MainActivity.EXTRA_DNI),intent.getStringExtra(MainActivity.EXTRA_PASSWD),restClient);
                 return null;
             }
 

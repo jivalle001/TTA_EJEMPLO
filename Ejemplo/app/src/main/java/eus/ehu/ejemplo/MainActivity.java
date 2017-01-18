@@ -15,6 +15,8 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity {
 
     public final static String EXTRA_LOGIN = "eus.ehu.ejemplo.authentication";
+    public final static String EXTRA_DNI = "eus.ehu.ejemplo.authentication";
+    public final static String EXTRA_PASSWD = "eus.ehu.ejemplo.authentication";
     RestClient restClient = new RestClient("http://u017633.ehu.eus:28080/ServidorTta/rest/tta");
 
     @Override
@@ -64,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
                 super.onPostExecute(aVoid);
                 Intent intent = new Intent(getApplicationContext(),MenuActivity.class);
                 intent.putExtra(MainActivity.EXTRA_LOGIN,user.getUser());
+                intent.putExtra(MainActivity.EXTRA_DNI,dni);
+                intent.putExtra(MainActivity.EXTRA_PASSWD,passwd);
                 startActivity(intent);
             }
         }.execute();
